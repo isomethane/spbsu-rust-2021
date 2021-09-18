@@ -78,17 +78,17 @@ fn main() {
     let c = Point { x: 4.0, y: 5.0 };
     println!("points: a {}, b {}, c {}", a, b, c);
 
-    let figures: [(&str, &Figure); 2] = [
-        ("rect", &Figure::Rect(rect)), ("circle", &Figure::Circle(circle))
+    let figures: [(&str, Figure); 2] = [
+        ("rect", Figure::Rect(rect)), ("circle", Figure::Circle(circle))
     ];
-    let points: [(&str, &Point); 3] = [("a", &a), ("b", &b), ("c", &c)];
+    let points: [(&str, Point); 3] = [("a", a), ("b", b), ("c", c)];
 
-    for (figure_name, figure) in figures {
-        for (point_name, point) in points {
+    for (figure_name, figure) in &figures {
+        for (point_name, point) in &points {
             println!("Does {} contain {}? {}", figure_name, point_name, figure.contains(point));
         }
     }
-    for (figure_name, figure) in figures {
+    for (figure_name, figure) in &figures {
         println!("{} area: {}", figure_name, figure.area());
     }
 }
