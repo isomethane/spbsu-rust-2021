@@ -1,6 +1,3 @@
-extern crate num_traits;
-extern crate noisy_float;
-
 use structs_and_methods::figures::{Point, Rect, Circle, Figure};
 
 use noisy_float::prelude::*;
