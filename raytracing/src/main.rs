@@ -160,9 +160,9 @@ fn render_box_scene<Q: AsRef<Path>>(path: Q, antialiasing: bool) {
                 }),
                 material: Material {
                     diffuse: fresh_air * 0.45,
-                    specular: Color::zero(),
                     reflectiveness: 0.1,
-                    ..Material::default()
+                    shininess: 3600.0,
+                    ..basic_shiny
                 },
             },
             Hittable::Primitive {
