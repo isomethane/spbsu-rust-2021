@@ -11,11 +11,12 @@ use std::path::Path;
 
 fn main() {
     create_dir_all("images/").expect("Failed to create directory");
-    render_box_scene("images/box_scene.png");
+    render_box_scene("images/box_scene.png", false);
+    render_box_scene("images/box_scene_antialiasing.png", true);
     render_tutorial_scene("images/tutorial_scene.png");
 }
 
-fn render_box_scene<Q: AsRef<Path>>(path: Q) {
+fn render_box_scene<Q: AsRef<Path>>(path: Q, antialiasing: bool) {
     let glass = Material {
         specular: Color::unit() * 0.5,
         shininess: 125.0,
@@ -301,9 +302,15 @@ fn render_box_scene<Q: AsRef<Path>>(path: Q) {
         recursion_depth: 6,
     };
 
-    let mut frame: Frame<f64> = Frame::new(1024, 768, 60.0);
-    frame.render(&scene);
-    frame.save(path).expect("Failed to save image");
+    if antialiasing {
+        let mut frame: Frame<f64> = Frame::new(1024 * 2, 768 * 2, 60.0);
+        frame.render(&scene);
+        frame.save_compressed(path).expect("Failed to save image");
+    } else {
+        let mut frame: Frame<f64> = Frame::new(1024, 768, 60.0);
+        frame.render(&scene);
+        frame.save(path).expect("Failed to save image");
+    }
 }
 
 fn render_tutorial_scene<Q: AsRef<Path>>(path: Q) {

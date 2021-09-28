@@ -58,4 +58,24 @@ impl<T: Real> Frame<T> {
         }
         image_buffer.save(path)
     }
+
+    pub fn save_compressed<Q: AsRef<Path>>(&self, path: Q) -> ImageResult<()> {
+        let mut image_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> =
+            image::ImageBuffer::new(self.width / 2, self.height / 2);
+        for (x, y, pixel) in image_buffer.enumerate_pixels_mut() {
+            let x_index = x as usize * 2;
+            let y_index = y as usize * 2;
+            let color: Color<T> = vec![
+                self.frame_buffer[y_index][x_index],
+                self.frame_buffer[y_index][x_index + 1],
+                self.frame_buffer[y_index + 1][x_index],
+                self.frame_buffer[y_index + 1][x_index + 1],
+            ]
+            .into_iter()
+            .fold(Color::zero(), |sum, x| sum + x)
+                / 4;
+            *pixel = color.into();
+        }
+        image_buffer.save(path)
+    }
 }

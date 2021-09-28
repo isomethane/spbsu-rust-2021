@@ -1,5 +1,6 @@
 use image::Rgb;
 use num_traits::real::Real;
+use num_traits::{NumCast, ToPrimitive};
 use std::ops;
 
 #[derive(Copy, Clone)]
@@ -72,6 +73,19 @@ impl<T: Real> ops::Mul<T> for Color<T> {
             r: self.r * rhs,
             g: self.g * rhs,
             b: self.b * rhs,
+        }
+    }
+}
+
+impl<T: Real, R: ToPrimitive> ops::Div<R> for Color<T> {
+    type Output = Self;
+
+    fn div(self, rhs: R) -> Self::Output {
+        let divisor = NumCast::from(rhs).unwrap();
+        Color {
+            r: self.r / divisor,
+            g: self.g / divisor,
+            b: self.b / divisor,
         }
     }
 }
