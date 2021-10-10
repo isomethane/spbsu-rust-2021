@@ -54,7 +54,3 @@ mod tests {
         assert_eq!(score(&input, &transform(&test_data())), 99);
     }
 }
-
-fn main() {
-    println!("Hello, world!");
-}
