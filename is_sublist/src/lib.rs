@@ -1,7 +1,7 @@
 use crate::Comparison::{Equal, Other, Sublist, Superlist};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-enum Comparison {
+pub enum Comparison {
     Equal,     // список `a` равен списку `b`
     Sublist,   // список `a` является подсписком `b`
     Superlist, // список `b` является подсписком `a`
@@ -15,7 +15,7 @@ fn is_sublist<T: PartialEq>(a: &[T], b: &[T]) -> bool {
     (0..=b.len() - a.len()).any(|index| &b[index..index + a.len()] == a)
 }
 
-fn compare<T: PartialEq>(a: &[T], b: &[T]) -> Comparison {
+pub fn compare<T: PartialEq>(a: &[T], b: &[T]) -> Comparison {
     if is_sublist(a, b) {
         if a.len() == b.len() {
             Equal
