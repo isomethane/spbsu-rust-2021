@@ -1,11 +1,11 @@
-use crate::Comparison::{Sublist, Other, Superlist, Equal};
+use crate::Comparison::{Equal, Other, Sublist, Superlist};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 enum Comparison {
-    Equal, // список `a` равен списку `b`
-    Sublist, // список `a` является подсписком `b`
+    Equal,     // список `a` равен списку `b`
+    Sublist,   // список `a` является подсписком `b`
     Superlist, // список `b` является подсписком `a`
-    Other, // списки не равны и не являются подсписками друг друга
+    Other,     // списки не равны и не являются подсписками друг друга
 }
 
 fn is_sublist<T: PartialEq>(a: &[T], b: &[T]) -> bool {
@@ -17,7 +17,11 @@ fn is_sublist<T: PartialEq>(a: &[T], b: &[T]) -> bool {
 
 fn compare<T: PartialEq>(a: &[T], b: &[T]) -> Comparison {
     if is_sublist(a, b) {
-        if a.len() == b.len() { Equal } else { Sublist }
+        if a.len() == b.len() {
+            Equal
+        } else {
+            Sublist
+        }
     } else if is_sublist(b, a) {
         Superlist
     } else {
@@ -60,7 +64,7 @@ mod tests {
         assert_eq!(Superlist, compare(&[1, 2, 3, 4, 5], &[1, 2]));
         assert_eq!(Superlist, compare(&[1, 2, 3, 4, 5], &[2, 3, 4]));
         assert_eq!(Superlist, compare(&[1, 2, 3, 4, 5], &[4, 5]));
-        assert_eq!(Superlist, compare(&[1, 2, 2, 1, 2, 3, 1, 2 ,4], &[1, 2, 3]));
+        assert_eq!(Superlist, compare(&[1, 2, 2, 1, 2, 3, 1, 2, 4], &[1, 2, 3]));
         assert_eq!(Superlist, compare(&[2, 1, 1, 1, 3], &[1, 1, 1]));
     }
 
