@@ -7,19 +7,19 @@ use num_traits::real::Real;
 use std::path::Path;
 
 pub struct Frame<T: Real> {
-    pub width: u32,
-    pub height: u32,
+    pub width: usize,
+    pub height: usize,
     pub field_of_view: f64,
-    pub(in crate::render) frame_buffer: Vec<Vec<Color<T>>>,
+    pub(in crate::render) frame_buffer: Vec<Color<T>>,
 }
 
 impl<T: Real> Frame<T> {
-    pub fn new(width: u32, height: u32, field_of_view_degrees: f64) -> Frame<T> {
+    pub fn new(width: usize, height: usize, field_of_view_degrees: f64) -> Frame<T> {
         Frame {
             width,
             height,
             field_of_view: field_of_view_degrees.to_radians(),
-            frame_buffer: vec![vec!(Color::default(); width as usize); height as usize],
+            frame_buffer: vec![Color::default(); width * height],
         }
     }
 
@@ -43,7 +43,7 @@ impl<T: Real> Frame<T> {
                     origin: Vec3D::default(),
                     direction,
                 };
-                self.frame_buffer[y_index as usize][x_index as usize] = scene.cast_ray(ray, 0);
+                self.frame_buffer[y_index * self.width + x_index] = scene.cast_ray(ray, 0);
             }
         }
     }
@@ -52,24 +52,24 @@ impl<T: Real> Frame<T> {
 impl<T: Real> Frame<T> {
     pub fn save<Q: AsRef<Path>>(&self, path: Q) -> ImageResult<()> {
         let mut image_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> =
-            image::ImageBuffer::new(self.width, self.height);
+            image::ImageBuffer::new(self.width as u32, self.height as u32);
         for (x, y, pixel) in image_buffer.enumerate_pixels_mut() {
-            *pixel = self.frame_buffer[y as usize][x as usize].into();
+            *pixel = self.frame_buffer[y as usize * self.width + x as usize].into();
         }
         image_buffer.save(path)
     }
 
     pub fn save_compressed<Q: AsRef<Path>>(&self, path: Q) -> ImageResult<()> {
         let mut image_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> =
-            image::ImageBuffer::new(self.width / 2, self.height / 2);
+            image::ImageBuffer::new(self.width as u32 / 2, self.height as u32 / 2);
         for (x, y, pixel) in image_buffer.enumerate_pixels_mut() {
             let x_index = x as usize * 2;
             let y_index = y as usize * 2;
             let color: Color<T> = vec![
-                self.frame_buffer[y_index][x_index],
-                self.frame_buffer[y_index][x_index + 1],
-                self.frame_buffer[y_index + 1][x_index],
-                self.frame_buffer[y_index + 1][x_index + 1],
+                self.frame_buffer[y_index * self.width + x_index],
+                self.frame_buffer[y_index * self.width + x_index + 1],
+                self.frame_buffer[(y_index + 1) * self.width + x_index],
+                self.frame_buffer[(y_index + 1) * self.width + x_index + 1],
             ]
             .into_iter()
             .fold(Color::zero(), |sum, x| sum + x)
